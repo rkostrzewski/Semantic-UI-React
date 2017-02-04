@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import cx from 'classnames'
-import React, { Component, PropTypes } from 'react'
+import React, { Component, PropTypes, isValidElement } from 'react'
 
 import {
   customPropTypes,
@@ -59,7 +59,7 @@ export default class AccordionTitle extends Component {
   }
 
   renderContent(content) {
-    return (
+    return isValidElement ? content : (
       <div style={({ display: 'inline-block' })}>
         <Icon name='dropdown' />
         {content}
@@ -85,7 +85,7 @@ export default class AccordionTitle extends Component {
 
     return (
       <ElementType {...rest} className={classes} onClick={this.handleClick}>
-        {_.isNil(content) ? children : this.renderContent(content)}
+        { _.isNil(content) ? children : this.renderContent(content) }
       </ElementType>
     )
   }
