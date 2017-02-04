@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import cx from 'classnames'
 
@@ -7,10 +8,11 @@ import {
   getUnhandledProps,
   META,
   useKeyOnly,
+  createShorthandFactory,
 } from '../../lib'
 
 function AccordionContent(props) {
-  const { active, children, className } = props
+  const { active, children, className, content } = props
   const classes = cx(
     'content',
     useKeyOnly(active, 'active'),
@@ -19,7 +21,11 @@ function AccordionContent(props) {
   const rest = getUnhandledProps(AccordionContent, props)
   const ElementType = getElementType(AccordionContent, props)
 
-  return <ElementType {...rest} className={classes}>{children}</ElementType>
+  return (
+    <ElementType {...rest} className={classes}>
+      {_.isNil(children) ? content : children}
+    </ElementType>
+  )
 }
 
 AccordionContent.displayName = 'AccordionContent'
@@ -36,6 +42,9 @@ AccordionContent.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
+
+  /** Shorthand for primary content. */
+  content: customPropTypes.contentShorthand,
 }
 
 AccordionContent._meta = {
@@ -43,5 +52,7 @@ AccordionContent._meta = {
   type: META.TYPES.MODULE,
   parent: 'Accordion',
 }
+
+AccordionContent.create = createShorthandFactory(AccordionContent, content => ({ content }))
 
 export default AccordionContent
