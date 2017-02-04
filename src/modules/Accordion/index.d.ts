@@ -33,8 +33,9 @@ interface AccordionProps {
   onTitleClick?: React.MouseEventHandler<HTMLDivElement>;
 
   /**
-   * Create simple accordion panels from an array of { text: <string>, content: <custom> } objects.
+   * Create simple accordion panels from an array of { text: <custom>, content: <custom> } objects.
    * Object can optionally define an `active` key to open/close the panel.
+   * Object can opitonally define a `key` key used for title and content nodes' keys.
    * Mutually exclusive with children.
    * TODO: AccordionPanel should be a sub-component
    */
