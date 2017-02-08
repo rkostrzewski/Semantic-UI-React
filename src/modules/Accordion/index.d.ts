@@ -46,12 +46,19 @@ interface AccordionProps {
 }
 
 interface AccordionClass extends React.ComponentClass<AccordionProps> {
+  Panel: typeof AccordionPanel;
   Content: typeof AccordionContent;
   Title: typeof AccordionTitle;
 }
 
 export const Accordion: AccordionClass;
 
+export const AccordionPanel: React.ComponentClass<AccordionPanelProps>;
+
+interface AccordionPanelProps {
+  /** Primary content. */
+  children?: React.ReactNode;
+}
 
 interface AccordionContentProps {
   /** Whether or not the content is visible. */

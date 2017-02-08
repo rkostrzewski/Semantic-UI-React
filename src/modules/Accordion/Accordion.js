@@ -10,6 +10,8 @@ import {
   useKeyOnly,
 } from '../../lib'
 
+
+import AccordionPanel from './AccordionPanel'
 import AccordionContent from './AccordionContent'
 import AccordionTitle from './AccordionTitle'
 
@@ -64,7 +66,6 @@ export default class Accordion extends Component {
      * Object can optionally define an `active` key to open/close the panel.
      * Object can opitonally define a `key` key used for title and content nodes' keys.
      * Mutually exclusive with children.
-     * TODO: AccordionPanel should be a sub-component
      */
     panels: customPropTypes.every([
       customPropTypes.disallow(['children']),
@@ -86,6 +87,7 @@ export default class Accordion extends Component {
     type: META.TYPES.MODULE,
   }
 
+  static Panel = AccordionPanel
   static Content = AccordionContent
   static Title = AccordionTitle
 
@@ -119,30 +121,40 @@ export default class Accordion extends Component {
     return exclusive ? activeIndex === index : _.includes(activeIndex, index)
   }
 
-  renderChildren = () => {
-    const { children } = this.props
-    let titleIndex = 0
-    let contentIndex = 0
-
-    return Children.map(children, (child) => {
-      const isTitle = child.type === AccordionTitle
-      const isContent = child.type === AccordionContent
+  renderPanelContents = (panel, index) => {
+    return Children.map(panel.props.children, panelChild => {
+      const isTitle = panelChild.type === AccordionTitle
+      const isContent = panelChild.type === AccordionContent
 
       if (isTitle) {
-        const currentIndex = titleIndex
-        const isActive = _.has(child, 'props.active') ? child.props.active : this.isIndexActive(titleIndex)
+        const isActive = _.has(panelChild, 'props.active') ? panelChild.props.active : this.isIndexActive(index)
         const onClick = (e) => {
-          this.handleTitleClick(e, currentIndex)
-          if (child.props.onClick) child.props.onClick(e, currentIndex)
+          this.handleTitleClick(e, index)
+          if (panelChild.props.onClick) panelChild.props.onClick(e, index)
         }
-        titleIndex++
-        return cloneElement(child, { ...child.props, active: isActive, onClick })
+        return cloneElement(panelChild, { ...panelChild.props, active: isActive, onClick })
       }
 
       if (isContent) {
-        const isActive = _.has(child, 'props.active') ? child.props.active : this.isIndexActive(contentIndex)
-        contentIndex++
-        return cloneElement(child, { ...child.props, active: isActive })
+        const isActive = _.has(panelChild, 'props.active') ? panelChild.props.active : this.isIndexActive(index)
+        return cloneElement(panelChild, { ...panelChild.props, active: isActive })
+      }
+
+      return panelChild
+    })
+  }
+
+  renderChildren = () => {
+    const { children } = this.props
+    let panelIndex = 0
+
+    return Children.map(children, child => {
+      const isPanel = child.type === AccordionPanel
+
+      if (isPanel) {
+        const currentIndex = panelIndex
+        panelIndex++
+        return _.flatten(this.renderPanelContents(child, currentIndex))
       }
 
       return child

@@ -16,6 +16,17 @@ describe('Accordion', () => {
   common.propKeyOnlyToClassName(Accordion, 'inverted')
   common.propKeyOnlyToClassName(Accordion, 'styled')
 
+  it('renders Accordion.Panel children', () => {
+    shallow(
+        <Accordion>
+          <Accordion.Panel>
+            <div id='find-me' />
+          </Accordion.Panel>
+        </Accordion>
+      )
+        .should.have.descendants('#find-me')
+  })
+
   describe('activeIndex', () => {
     it('defaults to -1', () => {
       shallow(<Accordion />)
@@ -24,10 +35,18 @@ describe('Accordion', () => {
     it('can be overridden with "active" on Title/Content', () => {
       const wrapper = mount(
         <Accordion activeIndex={0}>
-          <Accordion.Title active={false} />
-          <Accordion.Content active={false} />
-          <Accordion.Title active />
-          <Accordion.Content active />
+          <Accordion.Panel>
+            <Accordion.Title active={false} />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Content active={false} />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Title active />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Content active />
+          </Accordion.Panel>
         </Accordion>
       )
       const titles = wrapper.find('AccordionTitle')
@@ -42,10 +61,14 @@ describe('Accordion', () => {
     it('makes Accordion.Content at activeIndex - 1 "active"', () => {
       const contents = shallow(
         <Accordion activeIndex={0}>
-          <Accordion.Title />
-          <Accordion.Content />
-          <Accordion.Title />
-          <Accordion.Content />
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
         </Accordion>
       )
         .find('AccordionContent')
@@ -56,8 +79,10 @@ describe('Accordion', () => {
     it('is toggled to -1 when clicking Title a second time', () => {
       const wrapper = mount(
         <Accordion>
-          <Accordion.Title />
-          <Accordion.Content />
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
         </Accordion>
       )
 
@@ -80,12 +105,18 @@ describe('Accordion', () => {
     it('sets the correct pair of title/content active', () => {
       const wrapper = shallow(
         <Accordion>
-          <Accordion.Title />
-          <Accordion.Content />
-          <Accordion.Title />
-          <Accordion.Content />
-          <Accordion.Title />
-          <Accordion.Content />
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
         </Accordion>
       )
       wrapper.setProps({ activeIndex: 0 })
@@ -104,12 +135,18 @@ describe('Accordion', () => {
     it('can be an array', () => {
       const wrapper = shallow(
         <Accordion exclusive={false}>
-          <Accordion.Title />
-          <Accordion.Content />
-          <Accordion.Title />
-          <Accordion.Content />
-          <Accordion.Title />
-          <Accordion.Content />
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
         </Accordion>
       )
       wrapper.setProps({ activeIndex: [0, 1] })
@@ -128,10 +165,14 @@ describe('Accordion', () => {
     it('can be inclusive and makes Accordion.Content at activeIndex - 1 "active"', () => {
       const contents = shallow(
         <Accordion exclusive={false} defaultActiveIndex={[0]}>
-          <Accordion.Title />
-          <Accordion.Content />
-          <Accordion.Title />
-          <Accordion.Content />
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
         </Accordion>
       )
         .find('AccordionTitle')
@@ -143,10 +184,14 @@ describe('Accordion', () => {
     it('can be inclusive and allows multiple open', () => {
       const contents = shallow(
         <Accordion exclusive={false} defaultActiveIndex={[0, 1]}>
-          <Accordion.Title />
-          <Accordion.Content />
-          <Accordion.Title />
-          <Accordion.Content />
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
         </Accordion>
       )
         .find('AccordionTitle')
@@ -158,10 +203,14 @@ describe('Accordion', () => {
     it('can be inclusive and can open multiple panels by clicking', () => {
       const wrapper = mount(
         <Accordion exclusive={false}>
-          <Accordion.Title />
-          <Accordion.Content />
-          <Accordion.Title />
-          <Accordion.Content />
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
         </Accordion>
       )
       const titles = wrapper.find('AccordionTitle')
@@ -182,10 +231,14 @@ describe('Accordion', () => {
     it('can be inclusive and close multiple panels by clicking', () => {
       const wrapper = mount(
         <Accordion exclusive={false} defaultActiveIndex={[0, 1]}>
-          <Accordion.Title />
-          <Accordion.Content />
-          <Accordion.Title />
-          <Accordion.Content />
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Title />
+            <Accordion.Content />
+          </Accordion.Panel>
         </Accordion>
       )
       const titles = wrapper.find('AccordionTitle')
@@ -215,14 +268,18 @@ describe('Accordion', () => {
     it('is called with (event, index)', () => {
       const spy = sandbox.spy()
       const event = { foo: 'bar' }
-      const titles = mount(
+      const wrapper = mount(
         <Accordion onTitleClick={spy}>
-          <Accordion.Title />
-          <Accordion.Title />
+          <Accordion.Panel>
+            <Accordion.Title />
+          </Accordion.Panel>
+          <Accordion.Panel>
+            <Accordion.Title />
+          </Accordion.Panel>
         </Accordion>
       )
         .find('AccordionTitle')
-
+      const titles = wrapper.find('AccordionTitle')
       titles.at(0).simulate('click', event)
       spy.should.have.been.calledWithMatch(event, 0)
 
